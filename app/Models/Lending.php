@@ -18,13 +18,18 @@ class Lending extends Model
         'status',
         'borrow_date',
         'return_date',
+        'returned_by_user_id'
     ];
 
     public function item() {
-
+        return $this->belongsTo(Item::class);
     }
 
     public function user() {
-        
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function staffPenerima() {
+        return $this->belongsTo(User::class, 'returned_by_user_id');
     }
 }

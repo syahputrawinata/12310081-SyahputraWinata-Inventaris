@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Item extends Model
 {
     use HasFactory;
+
     protected $fillable = [
         'category_id',
         'name',
@@ -16,7 +17,7 @@ class Item extends Model
         'lending',
     ];
 
-    public function item() {
-        
+    public function category() {
+        return $this->belongsTo(Category::class);
     }
 }

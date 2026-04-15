@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('name');
             $table->integer('total');
             $table->integer('repair')->default(0);
-            $table->integer('landing')->default(0);
+            $table->integer('lending')->default(0);
             $table->timestamps();
         });
     }

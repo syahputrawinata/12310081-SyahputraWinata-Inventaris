@@ -17,10 +17,10 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('borrower_name');
             $table->integer('amount_borrowed');
-            $table->text('notes');
+            $table->text('notes')->nullable();
             $table->enum('status', ['borrowed', 'returned'])->default('borrowed');
             $table->date('borrow_date');
-            $table->date('return_date');
+            $table->date('return_date')->nullable();
             $table->timestamps();
         });
     }

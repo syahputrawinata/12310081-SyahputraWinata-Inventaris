@@ -7,11 +7,11 @@
         <p class="text-gray-500 text-sm mt-1">Manajemen stok, barang rusak, dan peminjaman.</p>
     </div>
     <div class="flex gap-2">
-        <a class="bg-green-600 text-white px-4 py-2 rounded shadow hover:bg-green-700 transition flex items-center">
+        <a href="{{ route('items.export') }}" class="bg-green-600 text-white px-4 py-2 rounded shadow hover:bg-green-700 transition flex items-center">
             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
             Export Excel
         </a>
-        <a class="bg-blue-600 text-white px-4 py-2 rounded shadow hover:bg-blue-700 transition">
+        <a href="{{ route('items.create') }}" class="bg-blue-600 text-white px-4 py-2 rounded shadow hover:bg-blue-700 transition">
             + Tambah Data
         </a>
     </div>
@@ -39,43 +39,48 @@
                 </tr>
             </thead>
             <tbody>
-                <!-- logic -->
-                
-                    <!-- @php perhitungan -->
-
-
+                @forelse ($items as $index => $item)
+                    @php
+                        // Logika perhitungan stok
+                        $stokTersedia = $item->total - $item->repair - $item->lending;
+                    @endphp
                     <tr class="border-b hover:bg-gray-50 transition">
-                        <td class="p-3 text-sm text-center text-gray-500">1</td>
-                        <td class="p-3 text-sm font-medium text-gray-800">Nama</td>
+                        <td class="p-3 text-sm text-center text-gray-500">{{ $index + 1 }}</td>
+                        <td class="p-3 text-sm font-medium text-gray-800">{{ $item->name }}</td>
                         <td class="p-3 text-sm">
                             <span class="bg-gray-100 px-2 py-1 rounded text-xs text-gray-600 uppercase font-semibold">
-                                Kategori
+                                {{ $item->category->name }}
                             </span>
                         </td>
-                        <td class="p-3 text-sm text-center font-bold">Total</td>
-                        <td class="p-3 text-sm text-center font-bold text-green-600">10</td>
+                        <td class="p-3 text-sm text-center font-bold">{{ $item->total }}</td>
+                        <td class="p-3 text-sm text-center font-bold text-green-600">{{ $stokTersedia }}</td>
                         <td class="p-3 text-sm text-center font-bold text-blue-600">
-                            <!-- logic jumlah peminjaman -->
-                                <a class="underline decoration-blue-300 hover:text-blue-800">
-                                    1
+                            @if($item->lending > 0)
+                                <a href="{{ route('items.lendings', $item->id) }}" class="underline decoration-blue-300 hover:text-blue-800">
+                                    {{ $item->lending }}
                                 </a>
+                            @else
                                 0
+                            @endif
                         </td>
-                        <td class="p-3 text-sm text-center font-bold text-red-600">2</td>
+                        <td class="p-3 text-sm text-center font-bold text-red-600">{{ $item->repair }}</td>
                         <td class="p-3 text-sm">
                             <div class="flex justify-center gap-3">
-                                <a class="text-yellow-600 hover:text-yellow-800 font-bold uppercase text-xs transition">Edit</a>
+                                <a href="{{ route('items.edit', $item->id) }}" class="text-yellow-600 hover:text-yellow-800 font-bold uppercase text-xs transition">Edit</a>
                                 
-                                <!-- form delete -->
-                                <button type="submit" class="text-red-600 hover:text-red-800 font-bold uppercase text-xs transition">Hapus</button>
+                                <form action="{{ route('items.destroy', $item->id) }}" method="POST" onsubmit="return confirm('Yakin hapus barang ini?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="text-red-600 hover:text-red-800 font-bold uppercase text-xs transition">Hapus</button>
+                                </form>
                             </div>
                         </td>
                     </tr>
-                
+                @empty
                     <tr>
                         <td colspan="8" class="p-6 text-center text-gray-400 italic">Belum ada data barang tersedia.</td>
                     </tr>
-                    
+                @endforelse
             </tbody>
         </table>
     </div>

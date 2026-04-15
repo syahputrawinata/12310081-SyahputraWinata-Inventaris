@@ -12,16 +12,20 @@
             <div class="p-4 text-2xl font-bold border-b border-blue-700">INVENTARIS</div>
             <nav class="flex-1 p-4">
                 <ul class="space-y-2">
-                    <li><a class="block p-2 hover:bg-blue-700 rounded">Dashboard</a></li>
-                        <li><a class="block p-2 hover:bg-blue-700 rounded">Data Barang</a></li>
-                        <li><a class="block p-2 hover:bg-blue-700 rounded">Data Kategori</a></li>
-                    <li><a class="block p-2 hover:bg-blue-700 rounded">Peminjaman</a></li>
-                    <li><a class="block p-2 hover:bg-blue-700 rounded">Pengguna</a></li>
+                    <li><a href="{{ route('dashboard') }}" class="block p-2 hover:bg-blue-700 rounded">Dashboard</a></li>
+                    @if (auth()->user()->role === 'admin')
+                        <li><a href="{{ route('categories.index')}}" class="block p-2 hover:bg-blue-700 rounded">Data Kategori</a></li>
+                        <li><a href="{{ route('items.index') }}" class="block p-2 hover:bg-blue-700 rounded">Data Barang</a></li>
+                    @endif
+                    <li><a href="{{ route('lendings.index') }}" class="block p-2 hover:bg-blue-700 rounded">Peminjaman</a></li>
+                    <li><a href="{{ route('users.index') }}" class="block p-2 hover:bg-blue-700 rounded">Pengguna</a></li>
                 </ul>
             </nav>
             <div class="p-4 border-t border-blue-700">
-                <!-- Form -->
+                <form action="{{ route('logout') }}">
+                    @csrf
                     <button class="w-full text-left p-2 hover:bg-red-600 rounded">Logout</button>
+                </form>
             </div>
         </div>
 

@@ -14,7 +14,11 @@ class Category extends Model
         'name',
     ];
 
-    public function user() {
-        
+    public function user () {
+        return $this->belongsTo(User::class);
+    }
+
+    public function item() {
+        return $this->hasMany(Item::class);
     }
 }

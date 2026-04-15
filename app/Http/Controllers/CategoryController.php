@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Category;
 use Illuminate\Http\Request;
+use App\Models\Category;
+use App\Models\User;
+use App\Models\Item;
 
 class CategoryController extends Controller
 {
@@ -13,10 +15,10 @@ class CategoryController extends Controller
     public function index()
     {
         //
-        $categories = Category::with('user_id')->Category::withCount('item');
-        $users = User::all;
-        $items = User::all;
-        return view('categories.index')->with('$users', $items);
+        $categories = Category::with('user')->withCount('item')->get();
+        $users = User::all();
+        $items = Item::all(); 
+        return view('categories.index', compact('categories', 'users', 'items'));
     }
 
     /**
@@ -34,18 +36,21 @@ class CategoryController extends Controller
     {
         //
         $request->validate([
-            'name' => 'required|max:255',
+            'name' => 'required|string|max:255',
+            'user_id' => 'required|exists:users,id',
+        ]);
+        Category::create([
+            'name' => $request->name,
+            'user_id' => $request->user_id,
         ]);
 
-        Category::create([
-            'name' => 'request->name',
-        ]);
+        return redirect()->route('categories.index')->with('success', 'Category Berhasil Ditambahkan!');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Category $category)
+    public function show(string $id)
     {
         //
     }
@@ -56,7 +61,8 @@ class CategoryController extends Controller
     public function edit(Category $category)
     {
         //
-        return view('categories.edit');
+        $users = User::all();
+        return view('categories.edit', compact('category', 'users'));
     }
 
     /**
@@ -66,8 +72,16 @@ class CategoryController extends Controller
     {
         //
         $request->validate([
-            'name' => $request->name,
+            'name' => 'required|string|max:255',
+            'user_id' => 'required|exists:users,id',
         ]);
+
+        $category->update([
+            'name' => $request->name,
+            'user_id' => $request->user_id,
+        ]);
+
+        return redirect()->route('categories.index')->with('success', 'Category berhasil di ubah!');
     }
 
     /**
@@ -76,5 +90,11 @@ class CategoryController extends Controller
     public function destroy(Category $category)
     {
         //
+        $category->delete();
+        return redirect()->route('categories.index')->with('success', 'Category berhasil dihapus!');
+    }
+
+    public function exportExcel (Request $request) {
+        return \Maatwebsite\Excel\Facades\Excel::download(new \App\Exports\CategoryExport, 'Data_Kategori.xlsx');
     }
 }
